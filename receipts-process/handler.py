@@ -1,23 +1,19 @@
-import boto3
+#import boto3
 import os
 import sys
 import uuid
 from urllib.parse import unquote_plus
 from PIL import Image
 import PIL.Image
-import cv2
-import pytesseract
+#import cv2
+#import pytesseract
 
-s3_client = boto3.client('s3')
-
-
-def resize_image(image_path, resized_path):
-    with Image.open(image_path) as image:
-        image.thumbnail(tuple(x / 2 for x in image.size))
-        image.save(resized_path)
+#s3_client = boto3.client('s3')
 
 
-def lambda_handler(event, context):
+def lambda_handler(event, _):
+
+    return {"statusCode": 200}
     for record in event['Records']:
         bucket = record['s3']['bucket']['name']
         key = unquote_plus(record['s3']['object']['key'])

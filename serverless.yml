@@ -1,0 +1,12 @@
+service: image-process-lambda
+
+frameworkVersion: "2 || 3"
+
+provider:
+  name: aws
+  runtime: python3.8
+  lambdaHashingVersion: 20201221
+
+functions:
+  process_ocr:
+    handler: receipts-process.handler.lambda_handler
