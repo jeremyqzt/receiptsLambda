@@ -18,3 +18,5 @@ var/
 receipts-process/__*
 # Serverless directories
 .serverless
+layer
+Docker/tesseract
