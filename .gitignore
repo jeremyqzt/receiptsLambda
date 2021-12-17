@@ -20,3 +20,5 @@ receipts-process/__*
 .serverless
 layer
 Docker/tesseract
+keys
+node_modules
