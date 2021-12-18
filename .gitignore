@@ -22,3 +22,5 @@ layer
 Docker/tesseract
 keys
 node_modules
+.DS_Store
+.requirements.zip

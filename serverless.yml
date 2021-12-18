@@ -7,18 +7,6 @@ provider:
   runtime: python3.8
   lambdaHashingVersion: 20201221
 
-layers:
-  OCR:
-    path: layer
-    name: ocr-layer
-    description: Layer with Tesseract
-    compatibleRuntimes:
-      - python3.7
-    retain: false
-    package:
-      include:
-        - layer/**
-
 package:
   exclude:
     - .idea/**
@@ -26,6 +14,8 @@ package:
     - .pytest_cache/**
     - tesseract/**
     - venv/**
+    - env/**
+    - node_modules
     - build_tesseract.sh
     - Dockerfile
     - lambda_event.json
@@ -34,19 +24,47 @@ package:
     - test.jpg
     - test_handler.py
     - use_ocr_as_a_service.py
-    - layer/**
 
 functions:
-  process_ocr:
-    handler: receipts-process.handler.lambda_handler
-    memorySize: 3000
-    timeout: 20
-    layers:
-      - {Ref: OCRLambdaLayer}
+  create:
+    handler: receipts-api.handler.create
     events:
       - http:
-          path: ocr
+          path: posts/create
           method: post
-    package:
-      include:
-        - handler.py
+  get:
+    handler: receipts-api.handler.get
+    events:
+      - http:
+          path: posts/get
+          method: get
+  all:
+    handler: receipts-api.handler.all
+    events:
+      - http:
+          path: posts/all
+          method: get
+
+resources: 
+    Resources:
+      postsTable: 
+        Type: AWS::DynamoDB::Table
+        Properties:
+          TableName: posts
+          AttributeDefinitions:
+            - AttributeName: id
+              AttributeType: N
+          KeySchema:
+            - AttributeName: id
+              KeyType: HASH
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+  
+plugins:
+- serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    zip: true
