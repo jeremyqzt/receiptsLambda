@@ -1,0 +1,19 @@
+Resources:
+  ReceiptsTable: 
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: receipts
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+Outputs:
+  ReceiptsTable:
+    Value:
+      Ref: ReceiptsTable

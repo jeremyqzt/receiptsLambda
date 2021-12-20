@@ -2,17 +2,24 @@ try:
   import unzip_requirements
 except ImportError:
   pass
-  
+
 import json
 import logging
 import boto3
 import datetime
 import dynamo
+import os
+from PIL import Image
+
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
 dynamodb = boto3.client('dynamodb')
-table_name = 'posts'
+s3_client = boto3.client('s3')
+
+dest_bucket = 'image-bucket'
+table_name = 'attachments'
 
 
 def create(event, context):
@@ -24,10 +31,19 @@ def create(event, context):
         "body": "An error occured while creating post."
     }
 
+    some_text = "test"
+    file_name = "my_test_file.csv"
+    lambda_path = "/tmp/" + file_name
+    s3_path = "output/" + file_name
+    os.system('echo testing... >'+lambda_path)
+    s3_client.meta.client.upload_file(lambda_path, dest_bucket, file_name)
+
     post_str = event['body']
     post = json.loads(post_str)
     current_timestamp = datetime.datetime.now().isoformat()
     post['createdAt'] = current_timestamp
+
+    s3 = boto3.client('s3')
 
     res = dynamodb.put_item(
         TableName=table_name, Item=dynamo.to_item(post))
@@ -36,6 +52,7 @@ def create(event, context):
     if res['ResponseMetadata']['HTTPStatusCode'] == 200:
         response = {
             "statusCode": 201,
+            "fileName": s3_path
         }
 
     return response
@@ -43,26 +60,39 @@ def create(event, context):
 
 def get(event, context):
     logger.info(f'Incoming request is: {event}')
+
     # Set the default error response
     response = {
         "statusCode": 500,
-        "body": "An error occured while getting post."
+        "body": "An error occured while creating post."
     }
 
-    post_id = event['pathParameters']['postId']
+    some_text = "test"
+    file_name = "my_test_file.csv"
+    lambda_path = "/tmp/" + file_name
+    s3_path = "output/" + file_name
+    os.system('echo testing... >'+lambda_path)
+    s3_client.meta.client.upload_file(lambda_path, dest_bucket, file_name)
 
-    post_query = dynamodb.get_item(
-        TableName=table_name, Key={'id': {'N': post_id}})
+    post_str = event['body']
+    post = json.loads(post_str)
+    current_timestamp = datetime.datetime.now().isoformat()
+    post['createdAt'] = current_timestamp
 
-    if 'Item' in post_query:
-        post = post_query['Item']
-        logger.info(f'Post is: {post}')
+    s3 = boto3.client('s3')
+
+    res = dynamodb.put_item(
+        TableName=table_name, Item=dynamo.to_item(post))
+
+    # If creation is successful
+    if res['ResponseMetadata']['HTTPStatusCode'] == 200:
         response = {
-            "statusCode": 200,
-            "body": json.dumps(dynamo.to_dict(post))
+            "statusCode": 201,
+            "fileName": s3_path
         }
 
     return response
+
 
 
 def all(event, context):

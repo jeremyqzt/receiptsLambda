@@ -6,6 +6,23 @@ provider:
   name: aws
   runtime: python3.8
   lambdaHashingVersion: 20201221
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource: "arn:aws:dynamodb:*:*:table/receipts"
+    - Effect: 'Allow'
+      Action:
+        - 's3:PutObject'
+        - 's3:GetObject'
+        - 's3:ListBucket'
+      Resource: 
+        - "arn:aws:s3:::receipt-attach/*"
+        - "arn:aws:s3:::receipt-attach"
 
 package:
   exclude:
@@ -27,40 +44,22 @@ package:
 
 functions:
   create:
-    handler: receipts-api.handler.create
+    handler: receipts-api-handler.create
     events:
       - http:
           path: posts/create
           method: post
   get:
-    handler: receipts-api.handler.get
+    handler: receipts-api-handler.get
     events:
       - http:
           path: posts/get
           method: get
-  all:
-    handler: receipts-api.handler.all
-    events:
-      - http:
-          path: posts/all
-          method: get
 
-resources: 
-    Resources:
-      postsTable: 
-        Type: AWS::DynamoDB::Table
-        Properties:
-          TableName: posts
-          AttributeDefinitions:
-            - AttributeName: id
-              AttributeType: N
-          KeySchema:
-            - AttributeName: id
-              KeyType: HASH
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-  
+resources:
+  - ${file(resources/dynamo.yml)}
+  - ${file(resources/s3.yml)}
+
 plugins:
 - serverless-python-requirements
 
