@@ -2,10 +2,10 @@ Resources:
   ReceiptsTable: 
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: receipts
+      TableName: attach-store
       AttributeDefinitions:
         - AttributeName: id
-          AttributeType: N
+          AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH

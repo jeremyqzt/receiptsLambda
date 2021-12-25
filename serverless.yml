@@ -14,12 +14,10 @@ provider:
         - dynamodb:Scan
         - dynamodb:GetItem
         - dynamodb:PutItem
-      Resource: "arn:aws:dynamodb:*:*:table/receipts"
+      Resource: "arn:aws:dynamodb:*:*:table/attach-store"
     - Effect: 'Allow'
       Action:
-        - 's3:PutObject'
-        - 's3:GetObject'
-        - 's3:ListBucket'
+        - 's3:*'
       Resource: 
         - "arn:aws:s3:::receipt-attach/*"
         - "arn:aws:s3:::receipt-attach"
