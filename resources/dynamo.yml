@@ -2,12 +2,20 @@ Resources:
   ReceiptsTable: 
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: attach-store
+      TableName: attachment-store
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
+        - AttributeName: business_id
+          AttributeType: S
+        - AttributeName: user_id
+          AttributeType: S
       KeySchema:
         - AttributeName: id
+          KeyType: HASH
+        - AttributeName: business_id
+          KeyType: HASH
+        - AttributeName: user_id
           KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 1

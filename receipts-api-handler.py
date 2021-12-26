@@ -18,7 +18,7 @@ dynamodb = boto3.client('dynamodb')
 s3_client = boto3.client('s3')
 
 dest_bucket = 'receipt-attach'
-table_name = 'attach-store'
+table_name = 'attachment-store'
 
 
 def create(event, context):
@@ -72,9 +72,12 @@ def get(event, context):
     os.system('echo testing... >'+lambda_path)
     s3_client.upload_file(lambda_path, dest_bucket, file_name)
 
-    post_str = Loader.parse_data(event)
+    try:
+        post_str = Loader.parse_data(event)
+    except:
+        return response
 
-    logger.info(f'Store values is: {str(post_str)}')
+    logger.info(f'storage value is: {str(post_str)}')
 
     res = dynamodb.put_item(
         TableName=table_name, Item=dynamo.to_item(post_str))
@@ -83,7 +86,8 @@ def get(event, context):
     if res['ResponseMetadata']['HTTPStatusCode'] == 200:
         response = {
             "statusCode": 201,
-            "fileName": s3_path
+            "fileName": s3_path,
+            "id": post_str["id"]
         }
 
     return response

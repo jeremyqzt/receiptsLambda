@@ -14,7 +14,7 @@ provider:
         - dynamodb:Scan
         - dynamodb:GetItem
         - dynamodb:PutItem
-      Resource: "arn:aws:dynamodb:*:*:table/attach-store"
+      Resource: "arn:aws:dynamodb:*:*:table/attachment-store"
     - Effect: 'Allow'
       Action:
         - 's3:*'

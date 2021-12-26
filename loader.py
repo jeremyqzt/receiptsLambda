@@ -10,6 +10,8 @@ class Loader:
         user_id = json_dict.get("user_id", None)
         business_id = json_dict.get("business_id", None)
 
+        if not user_id or not business_id: raise
+
         return {
             "id": str(uuid.uuid4()),
             "user_id": user_id,
